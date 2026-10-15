@@ -35,5 +35,15 @@
     "ABORTED": "تم الإلغاء.",
     "UNKNOWN": "حدث خطأ غير متوقع. يُرجى المحاولة مرة أخرى."
   },
-  "tools": {}
+  "tools": {
+    "merge": {
+      "action": "دمج PDF",
+      "options": {
+        "outputName": {
+          "label": "اسم الملف الناتج (اختياري)",
+          "placeholder": "merged"
+        }
+      }
+    }
+  }
 }

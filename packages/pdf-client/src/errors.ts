@@ -66,3 +66,8 @@ export function toPdfClientError(error: unknown): PdfClientError {
     message: error instanceof Error ? error.message : String(error),
   });
 }
+
+/** Like `signal.throwIfAborted()`, but throws the typed ABORTED error engines are expected to. */
+export function throwIfAborted(signal: AbortSignal | undefined): void {
+  if (signal?.aborted) throw new PdfClientError('ABORTED');
+}

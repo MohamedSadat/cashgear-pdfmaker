@@ -35,5 +35,45 @@
     "body": "The link may be broken, or the page may have moved.",
     "back": "See all tools"
   },
-  "tools": {}
+  "tools": {
+    "merge": {
+      "metaTitle": "Merge PDF – Combine PDF files online for free",
+      "metaDescription": "Combine multiple PDF files into one document in seconds. Put the files in order, then download. Files are processed in your browser and never uploaded.",
+      "h1": "Merge PDF files",
+      "lead": "Combine PDFs into one file in the order you want. Everything runs in your browser, so your files never leave your device.",
+      "cardText": "Combine several PDFs into one file, in the order you choose.",
+      "howTo": [
+        "Select or drop two or more PDF files.",
+        "Drag the files, or use the arrows, to set their order.",
+        "Optionally name the merged file, then click Merge PDF.",
+        "Download your combined PDF."
+      ],
+      "faq": [
+        {
+          "q": "Are my files uploaded to a server?",
+          "a": "No. Merging happens entirely in your browser, and your files are never sent to our servers."
+        },
+        {
+          "q": "How many files can I merge?",
+          "a": "Up to {maxFiles} PDF files with a combined size of up to {maxSize}."
+        },
+        {
+          "q": "Can I merge password-protected PDFs?",
+          "a": "Not yet. Remove the password first, then try again."
+        },
+        {
+          "q": "Will the quality change?",
+          "a": "No. Pages are copied as they are; text, images and fonts are not re-compressed."
+        },
+        {
+          "q": "Are bookmarks and form fields kept?",
+          "a": "Pages, text and images are kept. Bookmarks and fillable form fields may not carry over."
+        },
+        {
+          "q": "Does it work on my phone?",
+          "a": "Yes, in any modern browser on Windows, macOS, Android and iOS."
+        }
+      ]
+    }
+  }
 }

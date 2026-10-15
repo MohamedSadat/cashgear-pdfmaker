@@ -35,5 +35,15 @@
     "ABORTED": "Cancelled.",
     "UNKNOWN": "Something went wrong. Please try again."
   },
-  "tools": {}
+  "tools": {
+    "merge": {
+      "action": "Merge PDF",
+      "options": {
+        "outputName": {
+          "label": "File name (optional)",
+          "placeholder": "merged"
+        }
+      }
+    }
+  }
 }

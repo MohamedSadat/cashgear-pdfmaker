@@ -1,9 +1,11 @@
+import { merge } from './tools/merge';
 import type { ToolDefinition } from './types';
 
 export * from './types';
+export type { MergeOptions } from './tools/merge';
 
 /** Every tool, in the order the home page lists them. */
-export const tools = [] as const satisfies readonly ToolDefinition[];
+export const tools = [merge] as const satisfies readonly ToolDefinition[];
 
 export type Tool = (typeof tools)[number];
 export type ToolId = Tool['id'];
@@ -13,6 +15,13 @@ export const allTools: readonly ToolDefinition[] = tools;
 
 export function getToolById(id: string): ToolDefinition | undefined {
   return allTools.find((t) => t.id === id);
+}
+
+/** Like getToolById, for ids known at build time: a typo fails loudly instead of rendering nothing. */
+export function requireTool(id: string): ToolDefinition {
+  const tool = getToolById(id);
+  if (!tool) throw new Error(`Tool "${id}" is missing from the registry`);
+  return tool;
 }
 
 export function getToolBySlug(slug: string): ToolDefinition | undefined {

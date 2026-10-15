@@ -1,6 +1,6 @@
 import { operations } from '../engine/index';
 import type { OperationContext } from '../engine/types';
-import { PdfClientError } from '../errors';
+import { PdfClientError, throwIfAborted } from '../errors';
 import { getToolById } from '../registry/index';
 
 /**
@@ -22,6 +22,6 @@ export async function execute(
   if (!parsed.success) {
     throw new PdfClientError('UNKNOWN', { message: `Invalid options: ${parsed.error.message}` });
   }
-  context.signal?.throwIfAborted();
+  throwIfAborted(context.signal);
   return operation(inputs, parsed.data, context);
 }
