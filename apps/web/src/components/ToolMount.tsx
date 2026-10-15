@@ -17,6 +17,7 @@ function Shell() {
 // server-rendered shell holds its place, so nothing shifts.
 const TOOLS: Record<string, ComponentType> = {
   merge: dynamic(() => import('@repo/ui/tools/merge'), { ssr: false, loading: Shell }),
+  split: dynamic(() => import('@repo/ui/tools/split'), { ssr: false, loading: Shell }),
 };
 
 export function ToolMount({ toolId, input }: { toolId: string; input: ToolInput }) {

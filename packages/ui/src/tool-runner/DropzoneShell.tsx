@@ -14,16 +14,17 @@ export const dropzoneClass =
 export function DropzoneFace({ tool }: { tool: Pick<ToolDefinition, 'input'> }) {
   const t = useTranslations('ui');
   const locale = useLocale();
+  const { maxFiles } = tool.input;
   return (
     <>
       <FileUp aria-hidden className="size-10 text-primary" />
-      <span className="text-lg font-semibold">{t('dropzone.title')}</span>
+      <span className="text-lg font-semibold">{t('dropzone.title', { maxFiles })}</span>
       <span className={cn(buttonVariants({ size: 'lg' }), 'pointer-events-none')}>
-        {t('dropzone.browse')}
+        {t('dropzone.browse', { maxFiles })}
       </span>
       <span className="text-sm text-muted-foreground">
         {t('dropzone.hint', {
-          maxFiles: tool.input.maxFiles,
+          maxFiles,
           maxSize: formatMegabytes(tool.input.maxTotalBytes, locale),
         })}
       </span>

@@ -1,9 +1,9 @@
 {
   "dropzone": {
-    "title": "أفلت الملفات هنا",
-    "browse": "اختر الملفات",
+    "title": "{maxFiles, plural, one {أفلت الملف هنا} other {أفلت الملفات هنا}}",
+    "browse": "{maxFiles, plural, one {اختر ملفًا} other {اختر الملفات}}",
     "addMore": "أضف ملفات أخرى",
-    "hint": "حتى {maxFiles, plural, one {ملف واحد} two {ملفين} few {# ملفات} many {# ملفًا} other {# ملف}} بحجم إجمالي {maxSize}",
+    "hint": "{maxFiles, plural, one {ملف واحد بحجم أقصاه {maxSize}} two {حتى ملفين بحجم إجمالي {maxSize}} few {حتى # ملفات بحجم إجمالي {maxSize}} many {حتى # ملفًا بحجم إجمالي {maxSize}} other {حتى # ملف بحجم إجمالي {maxSize}}}",
     "privacy": "تتم المعالجة على جهازك، ولا يُرفع أي ملف."
   },
   "fileList": {
@@ -29,6 +29,8 @@
     "INVALID_PDF": "الملف «{fileName}» ليس ملف PDF صالحًا أو أنه تالف.",
     "ENCRYPTED": "الملف «{fileName}» محمي بكلمة مرور. أزل كلمة المرور ثم حاول مرة أخرى.",
     "EMPTY_DOCUMENT": "الملف «{fileName}» لا يحتوي على أي صفحات.",
+    "INVALID_PAGE_RANGE": "أدخل أرقام الصفحات أو نطاقاتها، مثل 1-3، 5.",
+    "PAGE_OUT_OF_RANGE": "الملف «{fileName}» لا يحتوي على كل الصفحات التي أدخلتها. تحقّق من أرقام الصفحات ثم حاول مرة أخرى.",
     "TOO_FEW_FILES": "أضف {minFiles, plural, one {ملفًا واحدًا} two {ملفين} few {# ملفات} many {# ملفًا} other {# ملف}} على الأقل.",
     "TOO_MANY_FILES": "يمكنك إضافة {maxFiles, plural, one {ملف واحد} two {ملفين} few {# ملفات} many {# ملفًا} other {# ملف}} كحد أقصى.",
     "TOO_LARGE": "يتجاوز الحجم الإجمالي للملفات {maxSize}، وهو الحد الأقصى للمعالجة داخل المتصفح.",
@@ -42,6 +44,21 @@
         "outputName": {
           "label": "اسم الملف الناتج (اختياري)",
           "placeholder": "merged"
+        }
+      }
+    },
+    "split": {
+      "action": "استخراج الصفحات",
+      "options": {
+        "pages": {
+          "label": "الصفحات المراد استخراجها",
+          "placeholder": "مثال: 1-3، 5",
+          "required": "أدخل أرقام الصفحات التي تريد استخراجها.",
+          "invalid": "اكتب أرقام الصفحات أو نطاقاتها مفصولة بفواصل، مثل 1-3، 5."
+        },
+        "outputName": {
+          "label": "اسم الملف الناتج (اختياري)",
+          "placeholder": "extracted-pages"
         }
       }
     }

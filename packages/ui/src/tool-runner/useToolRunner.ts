@@ -6,6 +6,7 @@ import {
   type PdfErrorCode,
   type Progress,
   type ToolDefinition,
+  initialOptions,
   outputFileName,
   sniffFile,
   toPdfClientError,
@@ -106,11 +107,12 @@ const newId = () => `file-${++nextId}`;
 /**
  * State and actions for one tool's page: the selected files (in order), the options, and the
  * run lifecycle idle -> running -> done. A failed run goes back to idle with an error.
+ * Options without a default start empty and must pass the schema before the run can start.
  */
 export function useToolRunner(tool: ToolDefinition, run: RunFn = runTool) {
   const [state, dispatch] = useReducer(reducer, undefined, (): RunnerState => ({
     files: [],
-    options: tool.options.parse({}) as Record<string, unknown>,
+    options: initialOptions(tool),
     status: 'idle',
     progress: null,
     error: null,
@@ -135,6 +137,13 @@ export function useToolRunner(tool: ToolDefinition, run: RunFn = runTool) {
     [tool, state.files],
   );
 
+  // Options that fail the schema, in schema order. The action stays disabled until there are none.
+  const invalidOptions = useMemo(() => {
+    const result = tool.options.safeParse(state.options);
+    if (result.success) return [];
+    return [...new Set(result.error.issues.map((issue) => String(issue.path[0])))];
+  }, [tool, state.options]);
+
   const addFiles = useCallback(
     async (list: readonly File[]) => {
       const sniffed = await Promise.all(
@@ -148,7 +157,7 @@ export function useToolRunner(tool: ToolDefinition, run: RunFn = runTool) {
   );
 
   const start = useCallback(async () => {
-    if (selectionError) return;
+    if (selectionError || invalidOptions.length > 0) return;
     const controller = new AbortController();
     abortRef.current = controller;
     dispatch({ type: 'start' });
@@ -186,11 +195,12 @@ export function useToolRunner(tool: ToolDefinition, run: RunFn = runTool) {
     } finally {
       abortRef.current = null;
     }
-  }, [run, selectionError, state.files, state.options, tool]);
+  }, [invalidOptions, run, selectionError, state.files, state.options, tool]);
 
   return {
     state,
     selectionError,
+    invalidOptions,
     addFiles,
     start,
     cancel: useCallback(() => abortRef.current?.abort(), []),

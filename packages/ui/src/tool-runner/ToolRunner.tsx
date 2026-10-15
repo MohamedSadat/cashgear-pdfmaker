@@ -41,10 +41,16 @@ export function ToolRunner({ tool, run }: ToolRunnerProps) {
   const selection = runner.selectionError;
   const shownError: RunnerError | null =
     error ?? (selection && selection.code !== 'TOO_FEW_FILES' ? { code: selection.code } : null);
+  // An empty required option is not an error yet: the hint under the action asks for it.
+  const missingOption = runner.invalidOptions.find(
+    (name) => String(options[name] ?? '').trim() === '',
+  );
   const hint =
     selection?.code === 'TOO_FEW_FILES' && files.length > 0
       ? message({ code: 'TOO_FEW_FILES' })
-      : undefined;
+      : missingOption !== undefined
+        ? t(`tools.${tool.id}.options.${missingOption}.required`)
+        : undefined;
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,7 +67,9 @@ export function ToolRunner({ tool, run }: ToolRunnerProps) {
             onReorder={runner.reorder}
             onRemove={runner.remove}
           />
-          <Dropzone tool={tool} onFiles={runner.addFiles} disabled={running} compact />
+          {tool.input.maxFiles > 1 && (
+            <Dropzone tool={tool} onFiles={runner.addFiles} disabled={running} compact />
+          )}
         </>
       )}
 
@@ -77,6 +85,7 @@ export function ToolRunner({ tool, run }: ToolRunnerProps) {
           <OptionsForm
             tool={tool}
             values={options}
+            invalid={runner.invalidOptions}
             onChange={runner.setOption}
             disabled={running}
           />
@@ -84,7 +93,7 @@ export function ToolRunner({ tool, run }: ToolRunnerProps) {
             toolId={tool.id}
             running={running}
             progress={progress}
-            disabled={selection !== null}
+            disabled={selection !== null || runner.invalidOptions.length > 0}
             hint={hint}
             onRun={() => void runner.start()}
             onCancel={runner.cancel}

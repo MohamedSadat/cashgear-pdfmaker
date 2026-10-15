@@ -3,7 +3,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ToolRunner } from '../src/tool-runner/ToolRunner';
-import { fakeTool, pdfFile, renderWithIntl } from './helpers';
+import { fakeSingleTool, fakeTool, pdfFile, renderWithIntl } from './helpers';
 
 const fileInput = () => document.querySelector<HTMLInputElement>('input[type=file]')!;
 const rowNames = () =>
@@ -79,5 +79,62 @@ describe('ToolRunner', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('الملف «سري.pdf» محمي بكلمة مرور');
     // Back to the editable state, with the offending file still listed.
     expect(rowNames()).toEqual(['a.pdf', 'سري.pdf']);
+  });
+});
+
+describe('ToolRunner with one file and a required option', () => {
+  it('hides "Add more files" once the single file is added', async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<ToolRunner tool={fakeSingleTool} run={vi.fn()} />);
+    expect(fileInput()).not.toHaveAttribute('multiple');
+    expect(screen.getByText('Drop a file here')).toBeInTheDocument();
+    await user.upload(fileInput(), pdfFile('only.pdf'));
+    await waitFor(() => expect(rowNames()).toEqual(['only.pdf']));
+    expect(screen.queryByText('Add more files')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Move up' })).not.toBeInTheDocument();
+  });
+
+  it('keeps the action disabled until the required option is valid', async () => {
+    const user = userEvent.setup();
+    const run = vi.fn().mockResolvedValue(new Uint8Array([37, 80, 68, 70]));
+    renderWithIntl(<ToolRunner tool={fakeSingleTool} run={run} />);
+    await user.upload(fileInput(), pdfFile('only.pdf'));
+
+    const field = await screen.findByLabelText('Page');
+    const action = screen.getByRole('button', { name: 'Pick' });
+    expect(field).toBeRequired();
+    expect(action).toBeDisabled();
+    expect(screen.getByText('Enter a page.')).toBeInTheDocument();
+    expect(screen.queryByText('Digits only.')).not.toBeInTheDocument();
+
+    await user.type(field, 'x');
+    expect(field).toHaveAttribute('aria-invalid', 'true');
+    expect(field).toHaveAccessibleDescription('Digits only.');
+    expect(screen.queryByText('Enter a page.')).not.toBeInTheDocument();
+    expect(action).toBeDisabled();
+
+    await user.clear(field);
+    await user.type(field, '2');
+    expect(field).not.toHaveAttribute('aria-invalid');
+    expect(action).toBeEnabled();
+    await user.click(action);
+    expect(run).toHaveBeenCalledWith(
+      'fakeSingle',
+      [expect.any(File)],
+      { page: '2', outputName: '' },
+      expect.anything(),
+    );
+    expect(await screen.findByRole('link', { name: 'Download' })).toHaveAttribute(
+      'download',
+      'picked.pdf',
+    );
+  });
+
+  it('shows the required-option hint in Arabic', async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<ToolRunner tool={fakeSingleTool} run={vi.fn()} />, 'ar');
+    await user.upload(fileInput(), pdfFile('ملف.pdf'));
+    expect(await screen.findByText('أدخل رقم صفحة.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'اختر' })).toBeDisabled();
   });
 });

@@ -74,6 +74,45 @@
           "a": "Yes, in any modern browser on Windows, macOS, Android and iOS."
         }
       ]
+    },
+    "split": {
+      "metaTitle": "Split PDF – Extract pages from a PDF online for free",
+      "metaDescription": "Pull the pages you need out of a PDF and save them as a new file. Type pages like 1-3, 5, then download. Files are processed in your browser and never uploaded.",
+      "h1": "Split PDF and extract pages",
+      "lead": "Choose the pages you need, such as 1-3, 5, and save them as a new PDF. Everything runs in your browser, so your file never leaves your device.",
+      "cardText": "Extract the pages you need from a PDF into a new file.",
+      "howTo": [
+        "Select or drop a PDF file.",
+        "Enter the pages to keep, such as 1-3, 5, or 8- for page 8 to the end.",
+        "Optionally name the new file, then click Extract pages.",
+        "Download your new PDF."
+      ],
+      "faq": [
+        {
+          "q": "Are my files uploaded to a server?",
+          "a": "No. Your PDF is split entirely in your browser and is never sent to our servers."
+        },
+        {
+          "q": "How do I choose the pages?",
+          "a": "Type page numbers and ranges separated by commas. For example, 1-3, 5, 8- extracts pages 1 to 3, page 5, and page 8 to the end. The pages keep their original order."
+        },
+        {
+          "q": "Can I split a PDF into several files at once?",
+          "a": "Not yet. For now, run the tool once for each part you need."
+        },
+        {
+          "q": "How large can the PDF be?",
+          "a": "Up to {maxSize}, the limit for processing in your browser."
+        },
+        {
+          "q": "Can I split a password-protected PDF?",
+          "a": "Not yet. Remove the password first, then try again."
+        },
+        {
+          "q": "Will the quality change? Are bookmarks kept?",
+          "a": "Pages are copied as they are, so text, images and fonts are not re-compressed. Bookmarks and fillable form fields may not carry over."
+        }
+      ]
     }
   }
 }

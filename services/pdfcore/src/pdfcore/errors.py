@@ -9,6 +9,8 @@ PdfErrorCode = Literal[
     "INVALID_PDF",
     "ENCRYPTED",
     "EMPTY_DOCUMENT",
+    "INVALID_PAGE_RANGE",
+    "PAGE_OUT_OF_RANGE",
     "TOO_FEW_FILES",
     "TOO_MANY_FILES",
     "TOO_LARGE",
@@ -43,6 +45,14 @@ class EncryptedInputError(PdfCoreError):
 
 class EmptyDocumentError(PdfCoreError):
     code = "EMPTY_DOCUMENT"
+
+
+class InvalidPageRangeError(PdfCoreError):
+    code = "INVALID_PAGE_RANGE"
+
+
+class PageOutOfRangeError(PdfCoreError):
+    code = "PAGE_OUT_OF_RANGE"
 
 
 class TooFewFilesError(PdfCoreError):

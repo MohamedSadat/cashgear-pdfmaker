@@ -1,29 +1,10 @@
 import { PDFDocument } from '@cantoo/pdf-lib';
-import { expect, type Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-
-const testdata = (rel: string) => fileURLToPath(new URL(`../../testdata/${rel}`, import.meta.url));
-const uiMessages = (locale: string) =>
-  JSON.parse(
-    readFileSync(
-      fileURLToPath(new URL(`../../packages/ui/src/messages/${locale}.json`, import.meta.url)),
-      'utf8',
-    ),
-  );
+import { testdata, uiMessages, watchUploads } from './helpers';
 
 const A = testdata('pdf/basic/a-3p-a4.pdf'); // 3 A4 pages, 595 pt wide
 const B = testdata('pdf/basic/b-2p-letter.pdf'); // 2 Letter pages, 612 pt wide
-
-/** Records every request that could carry file bytes off the device. */
-function watchUploads(page: Page): string[] {
-  const sent: string[] = [];
-  page.on('request', (request) => {
-    if (!['GET', 'HEAD'].includes(request.method()))
-      sent.push(`${request.method()} ${request.url()}`);
-  });
-  return sent;
-}
 
 for (const locale of ['en', 'ar'] as const) {
   test(`merges two PDFs in the chosen order (${locale})`, async ({ page }) => {

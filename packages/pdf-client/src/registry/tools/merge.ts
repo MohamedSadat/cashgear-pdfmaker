@@ -20,7 +20,7 @@ export const merge = defineTool({
   options: z.object({
     outputName: z.string().max(MAX_FILE_NAME_LENGTH).default(''),
   }),
-  related: [],
+  related: ['split'],
   icon: 'Combine',
 });
 

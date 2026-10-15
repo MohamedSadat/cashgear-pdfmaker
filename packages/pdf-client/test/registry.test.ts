@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { operations } from '../src/engine/index';
-import { allTools as tools, getToolById, getToolBySlug, webTools } from '../src/registry/index';
+import {
+  allTools as tools,
+  getToolById,
+  getToolBySlug,
+  initialOptions,
+  webTools,
+} from '../src/registry/index';
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -18,8 +24,19 @@ describe('tool registry', () => {
     expect(tool.input.maxFiles).toBeGreaterThanOrEqual(tool.input.minFiles);
     expect(tool.input.accept.length).toBeGreaterThan(0);
     for (const related of tool.related) expect(getToolById(related)).toBeDefined();
-    expect(() => tool.options.parse({})).not.toThrow();
     expect(getToolBySlug(tool.slug)).toBe(tool);
+  });
+
+  it.each(tools.map((t) => [t.id, t] as const))('%s starts with usable options', (_id, tool) => {
+    const initial = initialOptions(tool);
+    expect(Object.keys(initial)).toEqual(Object.keys(tool.options.shape));
+    // Only required options (no default) may start invalid: they start empty for the user to fill.
+    const issues = tool.options.safeParse(initial).error?.issues ?? [];
+    for (const issue of issues) {
+      const name = String(issue.path[0]);
+      expect(initial[name], name).toBe('');
+      expect(tool.options.shape[name]?.safeParse(undefined).success, name).toBe(false);
+    }
   });
 
   it('gives every browser-capable tool a browser engine', () => {

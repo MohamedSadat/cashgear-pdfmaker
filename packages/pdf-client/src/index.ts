@@ -3,6 +3,7 @@
 export * from './errors';
 export * from './limits';
 export * from './naming';
+export * from './pages';
 export * from './registry/index';
 export * from './sniff';
 export type { Progress } from './engine/types';

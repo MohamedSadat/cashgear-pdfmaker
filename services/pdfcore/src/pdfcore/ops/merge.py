@@ -4,28 +4,11 @@ from __future__ import annotations
 
 import io
 from collections.abc import Sequence
-from pathlib import Path
 
 import pikepdf
 
-from ..errors import EmptyDocumentError, EncryptedInputError, InvalidPdfError, TooFewFilesError
-
-Source = bytes | Path
-
-
-def _open(source: Source, index: int) -> pikepdf.Pdf:
-    data = io.BytesIO(source) if isinstance(source, bytes) else source
-    try:
-        pdf = pikepdf.open(data)
-    except pikepdf.PasswordError as e:
-        raise EncryptedInputError(file_index=index) from e
-    except pikepdf.PdfError as e:
-        raise InvalidPdfError(file_index=index) from e
-    if pdf.is_encrypted:
-        # Owner-password-only files open freely; reject them anyway, like the browser engine.
-        pdf.close()
-        raise EncryptedInputError(file_index=index)
-    return pdf
+from ..errors import EmptyDocumentError, TooFewFilesError
+from ..load import Source, open_pdf
 
 
 def merge_pdfs(sources: Sequence[Source], *, producer: str | None = None) -> bytes:
@@ -36,7 +19,7 @@ def merge_pdfs(sources: Sequence[Source], *, producer: str | None = None) -> byt
     try:
         with pikepdf.new() as out:
             for index, source in enumerate(sources):
-                pdf = _open(source, index)
+                pdf = open_pdf(source, index)
                 opened.append(pdf)
                 if len(pdf.pages) == 0:
                     raise EmptyDocumentError(file_index=index)
