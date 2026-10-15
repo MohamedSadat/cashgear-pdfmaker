@@ -1,4 +1,4 @@
-import type { Progress } from '../engine/types';
+import type { Progress, RunOutput } from '../engine/types';
 import { PdfClientError, toPdfClientError } from '../errors';
 import type { RunRequest, WorkerMessage } from './protocol';
 
@@ -10,7 +10,8 @@ export interface RunToolOptions {
 }
 
 /**
- * Runs a browser tool on the given files and resolves with the output bytes.
+ * Runs a browser tool on the given files and resolves with the file it produced: the tool's usual
+ * kind of output, or a ZIP when the run produced several files.
  *
  * File bytes are read only now, at run time. The work happens in a fresh module Web Worker that
  * receives the buffers by transfer and is terminated afterwards. If no worker can start (old
@@ -21,7 +22,7 @@ export async function runTool(
   files: readonly Blob[],
   options: unknown,
   { onProgress, signal, producer }: RunToolOptions = {},
-): Promise<Uint8Array<ArrayBuffer>> {
+): Promise<RunOutput> {
   try {
     signal?.throwIfAborted();
     onProgress?.({ phase: 'read', current: 0, total: files.length });
@@ -57,7 +58,7 @@ function runInWorker(
   request: RunRequest,
   onProgress: RunToolOptions['onProgress'],
   signal: AbortSignal | undefined,
-): Promise<Uint8Array<ArrayBuffer> | 'unavailable'> {
+): Promise<RunOutput | 'unavailable'> {
   return new Promise((resolve, reject) => {
     let started = false;
     const finish = () => {
@@ -82,7 +83,7 @@ function runInWorker(
           break;
         case 'done':
           finish();
-          resolve(new Uint8Array(message.output));
+          resolve({ bytes: new Uint8Array(message.output), kind: message.kind });
           break;
         case 'error':
           finish();
@@ -103,7 +104,7 @@ async function runInline(
   request: RunRequest,
   onProgress: RunToolOptions['onProgress'],
   signal: AbortSignal | undefined,
-): Promise<Uint8Array<ArrayBuffer>> {
+): Promise<RunOutput> {
   const { execute } = await import('./execute');
   return execute(
     request.toolId,

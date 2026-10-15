@@ -179,6 +179,9 @@ catalogs:
     eslint:
       specifier: 9.39.5
       version: 9.39.5
+    fflate:
+      specifier: 0.8.3
+      version: 0.8.3
     react:
       specifier: 19.3.1
       version: 19.3.1
@@ -284,6 +287,9 @@ importers:
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      fflate:
+        specifier: 'catalog:'
+        version: 0.8.3
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -318,6 +324,9 @@ importers:
       '@cantoo/pdf-lib':
         specifier: 'catalog:'
         version: 2.11.1(html-entities@2.6.0)
+      fflate:
+        specifier: 'catalog:'
+        version: 0.8.3
       html-entities:
         specifier: 2.6.0
         version: 2.6.0

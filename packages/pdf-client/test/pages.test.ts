@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pageIndices, parsePageRanges } from '../src/pages';
+import { pageChunks, pageGroups, pageIndices, parsePageRanges } from '../src/pages';
 
 describe('parsePageRanges', () => {
   it('reads single pages, ranges and open ranges', () => {
@@ -59,5 +59,55 @@ describe('pageIndices', () => {
     expect(indices('4', 3)).toBeNull();
     expect(indices('4-', 3)).toBeNull();
     expect(indices('99999999999999999999', 3)).toBeNull();
+  });
+});
+
+describe('pageGroups', () => {
+  const groups = (spec: string, pageCount: number) =>
+    pageGroups(parsePageRanges(spec) ?? [], pageCount);
+
+  it('gives one group per range, in the order typed', () => {
+    expect(groups('1-2, 3-5', 5)).toEqual([
+      [0, 1],
+      [2, 3, 4],
+    ]);
+    expect(groups('5, 1-3', 5)).toEqual([[4], [0, 1, 2]]);
+  });
+
+  it('keeps overlapping and repeated ranges as separate groups', () => {
+    expect(groups('1-3, 2-4, 2-4', 4)).toEqual([
+      [0, 1, 2],
+      [1, 2, 3],
+      [1, 2, 3],
+    ]);
+  });
+
+  it('runs an open range to the last page', () => {
+    expect(groups('1, 3-', 4)).toEqual([[0], [2, 3]]);
+  });
+
+  it('returns null when any range reaches past the end', () => {
+    expect(groups('1-2, 3-9', 5)).toBeNull();
+    expect(groups('6-', 5)).toBeNull();
+  });
+});
+
+describe('pageChunks', () => {
+  it('cuts the document every N pages; the last chunk may be shorter', () => {
+    expect(pageChunks(5, 2)).toEqual([[0, 1], [2, 3], [4]]);
+    expect(pageChunks(4, 2)).toEqual([
+      [0, 1],
+      [2, 3],
+    ]);
+    expect(pageChunks(3, 1)).toEqual([[0], [1], [2]]);
+  });
+
+  it('gives one chunk when N is at least the page count', () => {
+    expect(pageChunks(3, 3)).toEqual([[0, 1, 2]]);
+    expect(pageChunks(3, 100)).toEqual([[0, 1, 2]]);
+  });
+
+  it.each([0, -1, 1.5, Number.NaN])('rejects a chunk size of %s', (size) => {
+    expect(() => pageChunks(3, size)).toThrow(RangeError);
   });
 });

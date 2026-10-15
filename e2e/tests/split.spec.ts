@@ -1,5 +1,6 @@
 import { PDFDocument } from '@cantoo/pdf-lib';
 import { expect, test } from '@playwright/test';
+import { unzipSync } from 'fflate';
 import { readFileSync } from 'node:fs';
 import { testdata, uiMessages, watchUploads } from './helpers';
 
@@ -52,6 +53,115 @@ for (const locale of ['en', 'ar'] as const) {
     expect(sent, 'browser tools must not upload anything').toEqual([]);
   });
 }
+
+/** Ways to split the 5-page mixed PDF into several files, with the page widths of each file. */
+const MULTI = [
+  {
+    mode: 'ranges',
+    input: { en: '1-2, 3-5', ar: '١-٢، ٣-٥' },
+    parts: [
+      [595, 595],
+      [595, 612, 612],
+    ],
+  },
+  {
+    mode: 'every',
+    // A number field: Playwright types ASCII digits in both locales.
+    input: { en: '2', ar: '2' },
+    parts: [[595, 595], [595, 612], [612]],
+  },
+] as const;
+
+for (const locale of ['en', 'ar'] as const) {
+  for (const { mode, input, parts } of MULTI) {
+    test(`splits into several PDFs in a ZIP, mode ${mode} (${locale})`, async ({ page }) => {
+      const t = uiMessages(locale);
+      const options = t.tools.split.options;
+      const sent = watchUploads(page);
+      await page.goto(locale === 'en' ? '/split-pdf' : '/ar/split-pdf');
+      await expect(page.locator('html')).toHaveAttribute('dir', locale === 'en' ? 'ltr' : 'rtl');
+      await page.locator('input[type=file]').setInputFiles(await mixedPdf());
+
+      await page.getByLabel(options.mode.label).selectOption(mode);
+      // Only the field of the chosen mode is shown.
+      await expect(page.getByLabel(options.pages.label)).toHaveCount(0);
+      if (mode === 'every') {
+        await expect(page.getByLabel(options.ranges.label)).toHaveCount(0);
+        await expect(page.getByLabel(options.every.label)).toHaveValue('1');
+      } else {
+        await expect(page.getByLabel(options.every.label)).toHaveCount(0);
+      }
+      await page.getByLabel(options[mode].label).fill(input[locale]);
+
+      // The engine must run in a Web Worker, not the main-thread fallback.
+      const workerPromise = page.waitForEvent('worker');
+      await page.getByRole('button', { name: t.tools.split.action }).click();
+      await workerPromise;
+      const downloadPromise = page.waitForEvent('download');
+      await page.getByRole('link', { name: t.result.download }).click();
+      const download = await downloadPromise;
+
+      expect(download.suggestedFilename()).toBe('split.zip');
+      const files = unzipSync(readFileSync(await download.path()));
+      expect(Object.keys(files)).toEqual(parts.map((_, i) => `split-${i + 1}.pdf`));
+      for (const [i, widths] of parts.entries()) {
+        const part = await PDFDocument.load(files[`split-${i + 1}.pdf`]!);
+        expect(part.getPageCount(), `split-${i + 1}.pdf`).toBe(widths.length);
+        expect(part.getPages().map((p) => Math.round(p.getWidth()))).toEqual(widths);
+      }
+
+      expect(sent, 'browser tools must not upload anything').toEqual([]);
+    });
+  }
+}
+
+test('downloads a plain PDF when the split gives only one part', async ({ page }) => {
+  const t = uiMessages('en');
+  await page.goto('/split-pdf');
+  await page.locator('input[type=file]').setInputFiles(await mixedPdf());
+  await page.getByLabel(t.tools.split.options.mode.label).selectOption('every');
+  await page.getByLabel(t.tools.split.options.every.label).fill('10');
+  await page.getByRole('button', { name: t.tools.split.action }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('link', { name: t.result.download }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe('extracted-pages.pdf');
+  const out = await PDFDocument.load(readFileSync(await download.path()));
+  expect(out.getPageCount()).toBe(5);
+});
+
+test('names the ZIP after the typed file name', async ({ page }) => {
+  const t = uiMessages('en');
+  await page.goto('/split-pdf');
+  await page.locator('input[type=file]').setInputFiles(A);
+  await page.getByLabel(t.tools.split.options.mode.label).selectOption('ranges');
+  await page.getByLabel(t.tools.split.options.ranges.label).fill('1, 2-3');
+  await page.getByLabel(t.tools.split.options.outputName.label).fill('Chapters');
+  await page.getByRole('button', { name: t.tools.split.action }).click();
+  await expect(page.getByRole('link', { name: t.result.download })).toHaveAttribute(
+    'download',
+    'Chapters.zip',
+  );
+});
+
+test('keeps the action disabled until "pages per PDF" is a whole number', async ({ page }) => {
+  const t = uiMessages('en');
+  await page.goto('/split-pdf');
+  await page.locator('input[type=file]').setInputFiles(A);
+  await page.getByLabel(t.tools.split.options.mode.label).selectOption('every');
+  const field = page.getByLabel(t.tools.split.options.every.label);
+  const action = page.getByRole('button', { name: t.tools.split.action });
+
+  await field.fill('');
+  await expect(action).toBeDisabled();
+  await expect(page.getByText(t.tools.split.options.every.required)).toBeVisible();
+  await field.fill('0');
+  await expect(page.getByText(t.tools.split.options.every.invalid)).toBeVisible();
+  await expect(action).toBeDisabled();
+  await field.fill('2');
+  await expect(action).toBeEnabled();
+});
 
 test('explains a malformed page list and keeps the action disabled', async ({ page }) => {
   const t = uiMessages('en');

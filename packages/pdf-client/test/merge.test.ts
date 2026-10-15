@@ -127,7 +127,8 @@ describe('merge', () => {
   it('runs through the runner (main-thread fallback in Node)', async () => {
     const files = [new Blob([corpusBytes(A)]), new Blob([corpusBytes(B)])];
     const out = await runTool('merge', files, {});
-    expect(await pageWidths(out)).toHaveLength(5);
+    expect(out.kind).toBe('pdf');
+    expect(await pageWidths(out.bytes)).toHaveLength(5);
   });
 
   it('rejects options that fail the schema', async () => {

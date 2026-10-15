@@ -15,6 +15,7 @@
     "@repo/config": "workspace:*",
     "@types/node": "catalog:",
     "eslint": "catalog:",
+    "fflate": "catalog:",
     "typescript": "catalog:"
   }
 }

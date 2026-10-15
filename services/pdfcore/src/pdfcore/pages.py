@@ -44,3 +44,26 @@ def page_indices(ranges: list[PageRange], page_count: int) -> list[int] | None:
             return None
         selected.update(range(start - 1, last))
     return sorted(selected)
+
+
+def page_groups(ranges: list[PageRange], page_count: int) -> list[list[int]] | None:
+    """One list of 0-based indices per range, in the order typed; None when a page is past the end.
+
+    Overlapping and repeated ranges keep their own group (one output file each).
+    """
+    groups: list[list[int]] = []
+    for item in ranges:
+        indices = page_indices([item], page_count)
+        if indices is None:
+            return None
+        groups.append(indices)
+    return groups
+
+
+def page_chunks(page_count: int, size: int) -> list[list[int]]:
+    """0-based indices cut every `size` pages; the last chunk may be shorter."""
+    if size < 1:
+        raise ValueError(f"invalid chunk size {size}")
+    return [
+        list(range(start, min(start + size, page_count))) for start in range(0, page_count, size)
+    ]

@@ -54,3 +54,29 @@ export function pageIndices(ranges: readonly PageRange[], pageCount: number): nu
   }
   return [...selected].sort((a, b) => a - b);
 }
+
+/**
+ * One group of 0-based page indices per range, in the order the ranges were typed, for splitting
+ * a document into one file per range. Overlapping and repeated ranges keep their own group.
+ * Returns null when any range reaches past the last page.
+ */
+export function pageGroups(ranges: readonly PageRange[], pageCount: number): number[][] | null {
+  const groups: number[][] = [];
+  for (const range of ranges) {
+    const indices = pageIndices([range], pageCount);
+    if (!indices) return null;
+    groups.push(indices);
+  }
+  return groups;
+}
+
+/** 0-based page indices cut every `size` pages; the last chunk may be shorter. */
+export function pageChunks(pageCount: number, size: number): number[][] {
+  if (!Number.isInteger(size) || size < 1) throw new RangeError(`Invalid chunk size ${size}`);
+  const chunks: number[][] = [];
+  for (let start = 0; start < pageCount; start += size) {
+    const end = Math.min(start + size, pageCount);
+    chunks.push(Array.from({ length: end - start }, (_, i) => start + i));
+  }
+  return chunks;
+}

@@ -76,16 +76,16 @@
       ]
     },
     "split": {
-      "metaTitle": "Split PDF – Extract pages from a PDF online for free",
-      "metaDescription": "Pull the pages you need out of a PDF and save them as a new file. Type pages like 1-3, 5, then download. Files are processed in your browser and never uploaded.",
+      "metaTitle": "Split PDF – Split a PDF or extract pages online for free",
+      "metaDescription": "Split a PDF into several files by page ranges or every few pages, or extract the pages you need into a new PDF. Files are processed in your browser and never uploaded.",
       "h1": "Split PDF and extract pages",
-      "lead": "Choose the pages you need, such as 1-3, 5, and save them as a new PDF. Everything runs in your browser, so your file never leaves your device.",
-      "cardText": "Extract the pages you need from a PDF into a new file.",
+      "lead": "Extract the pages you need into a new PDF, or split one PDF into several files by page ranges or every few pages. Everything runs in your browser, so your file never leaves your device.",
+      "cardText": "Split a PDF into several files, or extract the pages you need.",
       "howTo": [
         "Select or drop a PDF file.",
-        "Enter the pages to keep, such as 1-3, 5, or 8- for page 8 to the end.",
-        "Optionally name the new file, then click Extract pages.",
-        "Download your new PDF."
+        "Choose how to split: extract pages into one PDF, one PDF per page range, or one PDF every N pages.",
+        "Enter the pages or ranges, such as 1-3, 5, or how many pages each PDF should have. Optionally name the result.",
+        "Click Split PDF, then download your PDF, or a ZIP file when the split gives several PDFs."
       ],
       "faq": [
         {
@@ -98,7 +98,7 @@
         },
         {
           "q": "Can I split a PDF into several files at once?",
-          "a": "Not yet. For now, run the tool once for each part you need."
+          "a": "Yes. Choose One PDF per page range and type ranges such as 1-3, 4-6, 7- to get one PDF for each, or choose One PDF every N pages to cut the file into equal parts. The PDFs download together in one ZIP file; if the split gives only one PDF, you get that PDF on its own."
         },
         {
           "q": "How large can the PDF be?",

@@ -6,4 +6,4 @@ export * from './naming';
 export * from './pages';
 export * from './registry/index';
 export * from './sniff';
-export type { Progress } from './engine/types';
+export type { Progress, RunOutput } from './engine/types';

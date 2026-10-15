@@ -2,10 +2,12 @@
 
 import { arrayMove } from '@dnd-kit/sortable';
 import {
+  FILE_KIND_INFO,
   type FileKind,
   type PdfErrorCode,
   type Progress,
   type ToolDefinition,
+  effectiveOptions,
   initialOptions,
   outputFileName,
   sniffFile,
@@ -108,6 +110,8 @@ const newId = () => `file-${++nextId}`;
  * State and actions for one tool's page: the selected files (in order), the options, and the
  * run lifecycle idle -> running -> done. A failed run goes back to idle with an error.
  * Options without a default start empty and must pass the schema before the run can start.
+ * Options that don't apply (see `conditionalOptions`) are validated and sent with their initial
+ * value. The download's name and type follow the kind of file the run returned (PDF or ZIP).
  */
 export function useToolRunner(tool: ToolDefinition, run: RunFn = runTool) {
   const [state, dispatch] = useReducer(reducer, undefined, (): RunnerState => ({
@@ -137,12 +141,14 @@ export function useToolRunner(tool: ToolDefinition, run: RunFn = runTool) {
     [tool, state.files],
   );
 
+  const runOptions = useMemo(() => effectiveOptions(tool, state.options), [tool, state.options]);
+
   // Options that fail the schema, in schema order. The action stays disabled until there are none.
   const invalidOptions = useMemo(() => {
-    const result = tool.options.safeParse(state.options);
+    const result = tool.options.safeParse(runOptions);
     if (result.success) return [];
     return [...new Set(result.error.issues.map((issue) => String(issue.path[0])))];
-  }, [tool, state.options]);
+  }, [tool, runOptions]);
 
   const addFiles = useCallback(
     async (list: readonly File[]) => {
@@ -163,23 +169,24 @@ export function useToolRunner(tool: ToolDefinition, run: RunFn = runTool) {
     dispatch({ type: 'start' });
     const files = state.files;
     try {
-      const bytes = await run(
+      const output = await run(
         tool.id,
         files.map((f) => f.file),
-        state.options,
+        runOptions,
         {
           signal: controller.signal,
           producer: BRAND.name,
           onProgress: (progress) => dispatch({ type: 'progress', progress }),
         },
       );
-      const blob = new Blob([bytes], { type: 'application/pdf' });
-      const requested = state.options.outputName;
+      const blob = new Blob([output.bytes], { type: FILE_KIND_INFO[output.kind].mime });
+      const requested = runOptions.outputName;
+      const name = typeof requested === 'string' ? requested : '';
       dispatch({
         type: 'done',
         result: {
           url: URL.createObjectURL(blob),
-          fileName: outputFileName(tool.output, typeof requested === 'string' ? requested : ''),
+          fileName: outputFileName(tool.output, name, output.kind),
           size: blob.size,
         },
       });
@@ -195,7 +202,7 @@ export function useToolRunner(tool: ToolDefinition, run: RunFn = runTool) {
     } finally {
       abortRef.current = null;
     }
-  }, [invalidOptions, run, selectionError, state.files, state.options, tool]);
+  }, [invalidOptions, run, runOptions, selectionError, state.files, tool]);
 
   return {
     state,

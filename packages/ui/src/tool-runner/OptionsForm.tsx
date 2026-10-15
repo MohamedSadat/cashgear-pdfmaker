@@ -1,6 +1,6 @@
 'use client';
 
-import type { ToolDefinition } from '@repo/pdf-client';
+import { type ToolDefinition, optionApplies, requiredOptions } from '@repo/pdf-client';
 import { useId, useMemo } from 'react';
 import { z } from 'zod';
 import { useTranslations } from '../lib/i18n';
@@ -10,6 +10,8 @@ interface JsonSchemaProperty {
   type?: string;
   enum?: readonly (string | number)[];
   maxLength?: number;
+  minimum?: number;
+  maximum?: number;
 }
 
 interface OptionsFormProps {
@@ -22,31 +24,30 @@ interface OptionsFormProps {
 }
 
 /**
- * Renders a field per option from the tool's zod schema. Labels come from
- * `ui.tools.<id>.options.<field>.label` (and optional `.placeholder`). A required text option (one
- * without a default) also needs `.required`, the hint while it is empty, and `.invalid`, shown
- * under the field while its value fails the schema.
+ * Renders a field per option from the tool's zod schema, skipping options that don't apply to the
+ * current values (`conditionalOptions`). Labels come from `ui.tools.<id>.options.<field>.label`
+ * (and optional `.placeholder`); enum choices from `.choices.<value>`. A text or number option the
+ * user must fill in (see `requiredOptions`) also needs `.required`, the hint while it is empty,
+ * and `.invalid`, shown under the field while its value fails the schema. An empty number field
+ * is stored as ''.
  */
 export function OptionsForm({ tool, values, invalid = [], onChange, disabled }: OptionsFormProps) {
   const t = useTranslations('ui');
   const baseId = useId();
-  const { properties, required } = useMemo(() => {
-    // 'input' mode: options with a default are optional, so `required` lists those without one.
+  const properties = useMemo(() => {
     const schema = z.toJSONSchema(tool.options, { io: 'input' }) as {
       properties?: Record<string, JsonSchemaProperty>;
-      required?: string[];
     };
-    return {
-      properties: Object.entries(schema.properties ?? {}),
-      required: new Set(schema.required),
-    };
+    return Object.entries(schema.properties ?? {});
   }, [tool]);
+  const required = useMemo(() => new Set(requiredOptions(tool, values)), [tool, values]);
 
-  if (properties.length === 0) return null;
+  const shown = properties.filter(([name]) => optionApplies(tool, name, values));
+  if (shown.length === 0) return null;
 
   return (
     <fieldset className="flex flex-col gap-4" disabled={disabled}>
-      {properties.map(([name, prop]) => {
+      {shown.map(([name, prop]) => {
         const id = `${baseId}-${name}`;
         const key = `tools.${tool.id}.options.${name}`;
         const label = t(`${key}.label`);
@@ -89,11 +90,25 @@ export function OptionsForm({ tool, values, invalid = [], onChange, disabled }: 
           );
         }
 
-        if (prop.type === 'string') {
+        const numeric = prop.type === 'integer' || prop.type === 'number';
+        if (prop.type === 'string' || numeric) {
           const value = String(values[name] ?? '');
           // An empty field is not flagged here; the hint under the action asks for it instead.
           const showError = invalid.includes(name) && value.trim() !== '';
           const errorId = `${id}-error`;
+          const kind = numeric
+            ? {
+                type: 'number',
+                inputMode: prop.type === 'integer' ? ('numeric' as const) : ('decimal' as const),
+                step: prop.type === 'integer' ? 1 : 'any',
+                min: prop.minimum,
+                // z.int() reports the safe-integer bound; no field needs it spelled out.
+                max:
+                  prop.maximum !== undefined && prop.maximum < Number.MAX_SAFE_INTEGER
+                    ? prop.maximum
+                    : undefined,
+              }
+            : { type: 'text', dir: 'auto', maxLength: prop.maxLength };
           return (
             <div key={name} className="flex flex-col gap-1.5">
               <label htmlFor={id} className="text-sm font-medium">
@@ -101,17 +116,19 @@ export function OptionsForm({ tool, values, invalid = [], onChange, disabled }: 
               </label>
               <input
                 id={id}
-                type="text"
-                dir="auto"
+                {...kind}
                 value={value}
-                maxLength={prop.maxLength}
                 placeholder={placeholder}
                 required={required.has(name)}
                 aria-invalid={showError || undefined}
                 aria-describedby={showError ? errorId : undefined}
-                onChange={(e) => onChange(name, e.target.value)}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  onChange(name, numeric && next !== '' ? Number(next) : next);
+                }}
                 className={cn(
                   'h-10 rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  numeric && 'max-w-40',
                   showError && 'border-destructive',
                 )}
               />

@@ -9,7 +9,11 @@ import type { Operation } from './types';
  * fonts, rotation); document-level bookmarks and form fields are not carried over.
  * `outputName` only affects the download name, which the UI derives from the options.
  */
-export const merge: Operation<MergeOptions> = async (inputs, _options, context = {}) => {
+export const merge: Operation<MergeOptions, Uint8Array<ArrayBuffer>> = async (
+  inputs,
+  _options,
+  context = {},
+) => {
   const { onProgress, signal, producer } = context;
   if (inputs.length < 2) throw new PdfClientError('TOO_FEW_FILES');
 

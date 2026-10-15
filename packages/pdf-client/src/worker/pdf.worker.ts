@@ -19,7 +19,7 @@ function send(message: WorkerMessage, transfer: Transferable[] = []): void {
 scope.onmessage = async (event) => {
   const { toolId, options, inputs, producer } = event.data;
   try {
-    const output = await execute(
+    const { bytes, kind } = await execute(
       toolId,
       inputs.map((buffer) => new Uint8Array(buffer)),
       options,
@@ -28,7 +28,7 @@ scope.onmessage = async (event) => {
         ...(producer ? { producer } : {}),
       },
     );
-    send({ type: 'done', output: output.buffer }, [output.buffer]);
+    send({ type: 'done', output: bytes.buffer, kind }, [bytes.buffer]);
   } catch (error) {
     send({ type: 'error', error: toPdfClientError(error).toJSON() });
   }

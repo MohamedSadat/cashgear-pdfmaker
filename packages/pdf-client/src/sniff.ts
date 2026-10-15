@@ -1,5 +1,5 @@
 /** File kinds the registry can accept or produce. */
-export type FileKind = 'pdf' | 'png' | 'jpeg' | 'docx' | 'xlsx' | 'pptx';
+export type FileKind = 'pdf' | 'png' | 'jpeg' | 'docx' | 'xlsx' | 'pptx' | 'zip';
 
 /** How many leading bytes sniffing needs. */
 export const SNIFF_BYTES = 1024;
@@ -20,6 +20,8 @@ export const FILE_KIND_INFO: Record<FileKind, { mime: string; extensions: readon
     mime: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     extensions: ['.pptx'],
   },
+  // Output only (several files from one run). Never accepted: sniffBytes doesn't return it.
+  zip: { mime: 'application/zip', extensions: ['.zip'] },
 };
 
 /** Value for an `<input type="file" accept>` attribute. */

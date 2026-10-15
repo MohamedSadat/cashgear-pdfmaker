@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@cantoo/pdf-lib": "catalog:",
+    "fflate": "catalog:",
     "html-entities": "2.6.0",
     "zod": "catalog:"
   },
