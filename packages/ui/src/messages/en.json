@@ -1,0 +1,39 @@
+{
+  "dropzone": {
+    "title": "Drop files here",
+    "browse": "Choose files",
+    "addMore": "Add more files",
+    "hint": "Up to {maxFiles, plural, one {# file} other {# files}}, {maxSize} in total",
+    "privacy": "Processed on your device. Nothing is uploaded."
+  },
+  "fileList": {
+    "label": "Selected files",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "remove": "Remove",
+    "dragHandle": "Drag to reorder"
+  },
+  "run": {
+    "reading": "Reading files…",
+    "processing": "Processing file {current} of {total}…",
+    "saving": "Saving…",
+    "cancel": "Cancel"
+  },
+  "result": {
+    "ready": "Your file is ready",
+    "download": "Download",
+    "startOver": "Start over"
+  },
+  "errors": {
+    "UNSUPPORTED_TYPE": "“{fileName}” isn't a file type this tool accepts.",
+    "INVALID_PDF": "“{fileName}” isn't a valid PDF or is damaged.",
+    "ENCRYPTED": "“{fileName}” is password-protected. Remove the password and try again.",
+    "EMPTY_DOCUMENT": "“{fileName}” has no pages.",
+    "TOO_FEW_FILES": "Add at least {minFiles, plural, one {# file} other {# files}}.",
+    "TOO_MANY_FILES": "You can add up to {maxFiles, plural, one {# file} other {# files}}.",
+    "TOO_LARGE": "The files together exceed {maxSize}, the limit for processing in your browser.",
+    "ABORTED": "Cancelled.",
+    "UNKNOWN": "Something went wrong. Please try again."
+  },
+  "tools": {}
+}

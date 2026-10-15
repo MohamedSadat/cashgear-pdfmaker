@@ -1,0 +1,32 @@
+{
+  "name": "@repo/pdf-client",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": [
+    "./src/worker/pdf.worker.ts"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./engine": "./src/engine/index.ts",
+    "./runner": "./src/worker/client.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@cantoo/pdf-lib": "catalog:",
+    "html-entities": "2.6.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

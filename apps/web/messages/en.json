@@ -1,0 +1,39 @@
+{
+  "site": {
+    "description": "Free PDF tools that run in your browser. Merge, split and convert PDF files without uploading them.",
+    "skipToContent": "Skip to content",
+    "footer": "Browser tools process your files on your device. They are never uploaded."
+  },
+  "nav": {
+    "allTools": "All tools",
+    "switchLanguage": "العربية",
+    "switchLanguageLabel": "اقرأ هذه الصفحة بالعربية"
+  },
+  "home": {
+    "metaTitle": "Free online PDF tools that work in your browser",
+    "metaDescription": "Merge, split, organize and convert PDF files for free. Most tools run in your browser, so your files never leave your device.",
+    "h1": "PDF tools that work in your browser",
+    "lead": "Fast, free tools for everyday PDF jobs. Most of them run on your own device, so your files stay private.",
+    "empty": "The first tools are on their way."
+  },
+  "categories": {
+    "organize": "Organize PDF",
+    "optimize": "Optimize PDF",
+    "convert": "Convert PDF",
+    "edit": "Edit PDF",
+    "security": "PDF security"
+  },
+  "toolPage": {
+    "privacy": "Your files stay on your device",
+    "howTo": "How it works",
+    "faq": "Frequently asked questions",
+    "related": "Related tools"
+  },
+  "notFound": {
+    "metaTitle": "Page not found",
+    "title": "We couldn't find that page",
+    "body": "The link may be broken, or the page may have moved.",
+    "back": "See all tools"
+  },
+  "tools": {}
+}

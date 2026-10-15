@@ -1,0 +1,31 @@
+{
+  "$comment": "License gate for npm dependencies, enforced by scripts/check-licenses.mjs. Exceptions need the owner's approval in the PR.",
+  "shippedPackages": ["web", "@repo/ui", "@repo/pdf-client"],
+  "allow": [
+    "MIT",
+    "MIT-0",
+    "ISC",
+    "0BSD",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "Apache-2.0",
+    "MPL-2.0",
+    "CC0-1.0",
+    "Unlicense",
+    "BlueOak-1.0.0"
+  ],
+  "exceptions": [
+    {
+      "package": "caniuse-lite",
+      "license": "CC-BY-4.0",
+      "reason": "Browser-support data used by next at build time; attribution-only license."
+    },
+    {
+      "packagePrefix": "@img/sharp-",
+      "license": "LGPL-3.0-or-later",
+      "reason": "libvips binaries, an optional dependency of next for server-side image optimization; dynamically linked and never sent to users. Revisit before bundling anything into the desktop app."
+    }
+  ],
+  "deny": ["AGPL-", "GPL-2.0", "GPL-3.0", "SSPL-", "BUSL-"],
+  "mustInclude": ["next", "radix-ui", "@cantoo/pdf-lib"]
+}

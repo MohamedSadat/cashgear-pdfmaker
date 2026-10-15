@@ -1,0 +1,26 @@
+{
+  "name": "pdf-suite",
+  "private": true,
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "turbo run dev --filter=web",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "check": "turbo run typecheck lint test build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "licenses:check": "node scripts/check-licenses.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "prettier": "3.9.10",
+    "turbo": "2.11.8",
+    "typescript": "catalog:"
+  }
+}

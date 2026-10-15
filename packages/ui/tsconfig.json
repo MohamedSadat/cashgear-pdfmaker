@@ -1,0 +1,7 @@
+{
+  "extends": "@repo/config/tsconfig/react-library.json",
+  "compilerOptions": {
+    "types": ["node", "@testing-library/jest-dom/vitest"]
+  },
+  "include": ["src", "test", "vitest.config.ts"]
+}

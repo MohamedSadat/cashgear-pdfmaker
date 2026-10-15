@@ -1,0 +1,38 @@
+{
+  "name": "web",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@repo/pdf-client": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "lucide-react": "1.57.0",
+    "next": "16.4.1",
+    "next-intl": "4.14.9",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "tailwindcss": "4.3.3",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

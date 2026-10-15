@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+@import '@repo/config/tailwind/preset.css';
+
+/* Workspace packages live outside this app, so tell Tailwind to scan them for classes. */
+@source '../../../../packages/ui/src';

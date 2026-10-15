@@ -1,0 +1,39 @@
+{
+  "dropzone": {
+    "title": "أفلت الملفات هنا",
+    "browse": "اختر الملفات",
+    "addMore": "أضف ملفات أخرى",
+    "hint": "حتى {maxFiles, plural, one {ملف واحد} two {ملفين} few {# ملفات} many {# ملفًا} other {# ملف}} بحجم إجمالي {maxSize}",
+    "privacy": "تتم المعالجة على جهازك، ولا يُرفع أي ملف."
+  },
+  "fileList": {
+    "label": "الملفات المحددة",
+    "moveUp": "تحريك للأعلى",
+    "moveDown": "تحريك للأسفل",
+    "remove": "إزالة",
+    "dragHandle": "اسحب لإعادة الترتيب"
+  },
+  "run": {
+    "reading": "جارٍ قراءة الملفات…",
+    "processing": "جارٍ معالجة الملف {current} من {total}…",
+    "saving": "جارٍ الحفظ…",
+    "cancel": "إلغاء"
+  },
+  "result": {
+    "ready": "ملفك جاهز",
+    "download": "تنزيل",
+    "startOver": "البدء من جديد"
+  },
+  "errors": {
+    "UNSUPPORTED_TYPE": "نوع الملف «{fileName}» غير مدعوم في هذه الأداة.",
+    "INVALID_PDF": "الملف «{fileName}» ليس ملف PDF صالحًا أو أنه تالف.",
+    "ENCRYPTED": "الملف «{fileName}» محمي بكلمة مرور. أزل كلمة المرور ثم حاول مرة أخرى.",
+    "EMPTY_DOCUMENT": "الملف «{fileName}» لا يحتوي على أي صفحات.",
+    "TOO_FEW_FILES": "أضف {minFiles, plural, one {ملفًا واحدًا} two {ملفين} few {# ملفات} many {# ملفًا} other {# ملف}} على الأقل.",
+    "TOO_MANY_FILES": "يمكنك إضافة {maxFiles, plural, one {ملف واحد} two {ملفين} few {# ملفات} many {# ملفًا} other {# ملف}} كحد أقصى.",
+    "TOO_LARGE": "يتجاوز الحجم الإجمالي للملفات {maxSize}، وهو الحد الأقصى للمعالجة داخل المتصفح.",
+    "ABORTED": "تم الإلغاء.",
+    "UNKNOWN": "حدث خطأ غير متوقع. يُرجى المحاولة مرة أخرى."
+  },
+  "tools": {}
+}
